@@ -148,7 +148,7 @@
                 let score = 0;
                 let correctCount = 0;
 
-                questions.forEach((question) => {
+                shuffledQuestions.forEach((question) => {
                     const selected = finalAnswers[question.id] || null;
                     const isCorrect = selected === question.correct;
                     const points = isCorrect ? 2 : 0;
