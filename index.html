@@ -356,7 +356,7 @@
             };
 
             const handleSelectOption = (optLabel) => {
-                setAnswers(prev => ({ ...prev, [questions[currentQ].id]: optLabel }));
+                setAnswers(prev => ({ ...prev, [shuffledQuestions[currentQ].id]: optLabel }));
             };
 
             const handleNext = () => {
