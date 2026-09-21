@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThinkVerse 2026 - Prompt Master Symposium</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { margin: 0; background-color: #0f172a; color: white; }
+        .prevent-select { user-select: none; -webkit-user-select: none; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+            .disqualified { color: #f87171; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useCallback } = React;
+
+        const questions = [
+            {
+                id: 1,
+                image: "img-1.png",
+                correct: "A",
+                options: [
+                    { label: "A", text: "Photorealistic cyberpunk cat wearing reflective sunglasses in a neon-lit alley at night, cinematic lighting, shallow depth of field, close-up portrait, vibrant neon colors, detailed fur texture, bokeh background, ultra-detailed, high contrast, realistic reflections, 8K." },
+                    { label: "B", text: "Photorealistic cyberpunk dog wearing reflective sunglasses in a alley at night, cinematic lighting, wide-angle street view, full-body shot, vibrant neon colors, detailed fur texture, deep depth of field, ultra-detailed, high contrast, realistic reflections, 8K." },
+                    { label: "C", text: "Photorealistic cyberpunk cat wearing reflective sunglasses in a neon-lit alley at night, cinematic lighting, top-down aerial view, full-body shot, glowing colors, detailed fur texture, deep depth of field, ultra-detailed, high contrast, realistic reflections, 8K." },
+                    { label: "D", text: "Photorealistic cyberpunk cat wearing reflective sunglasses in a neon-lit alley at night, cinematic lighting, watercolor illustration, close-up portrait, vibrant pastel colors, visible brushstrokes, soft texture, ultra-detailed, high contrast, realistic reflections, 8K." }
+                ]
+            },
+            {
+                id: 2,
+                image: "img-2.png",
+                correct: "C",
+                options: [
+                    { label: "A", text: "Ancient temple floating above clouds at sunrise, fantasy architecture, golden light, anime style, aerial perspective." },
+                    { label: "B", text: "Ancient temple floating above clouds at sunrise, fantasy architecture, golden light, oil painting, aerial perspective." },
+                    { label: "C", text: "Ancient temple floating above clouds at sunrise, fantasy architecture, golden light, ultra realistic, aerial perspective." },
+                    { label: "D", text: "Ancient temple floating above clouds at sunrise, beautiful architecture, golden light, low-poly 3D render, aerial perspective." }
+                ]
+            },
+            {
+                id: 3,
+                image: "img-3.png",
+                correct: "A",
+                options: [
+                    { label: "A", text: "A dark monochrome photograph of a shiny metallic silver crown resting on a stack of black luxury playing cards, sharp studio lighting, bright lens flares, deep shadows, pitch-black background, high contrast, realistic reflections, detailed metal texture, cinematic composition." },
+                    { label: "B", text: "A dark monochrome photograph of a shiny metallic silver crown resting on a stack of black luxury playing cards, soft natural lighting, gentle highlights, subtle shadows, grey background, low contrast, muted reflections, smooth metal texture, cinematic composition." },
+                    { label: "C", text: "A dark monochrome photograph of a shiny metallic silver crown resting on a stack of black luxury playing cards, colourful neon lighting, vibrant lens flares, soft shadows, dark blue background, high saturation, glowing reflections, detailed metal texture, cinematic composition." },
+                    { label: "D", text: "A dark monochrome photograph of a shiny metallic silver crown resting on a stack of black luxury playing cards, dramatic watercolour lighting, painted highlights, artistic shadows, textured black background, soft contrast, painted reflections, brushstroke metal texture, cinematic composition." }
+                ]
+            },
+            {
+                id: 4,
+                image: "img-4.jpeg",
+                correct: "D",
+                options: [
+                    { label: "A", text: "A magical ancient book floating in a dark stormy sky, open pages glowing softly, blue magical energy and golden sparkling particles rising from the pages, mystical light trails swirling upward, weathered parchment pages, dark leather cover, atmospheric clouds, flat studio lighting, minimal glow, realistic textures, deep depth of field, watercolour, ultra-detailed, high contrast, 8K." },
+                    { label: "B", text: "A magical ancient book floating in a dark stormy sky, open pages glowing softly, red magical energy and silver sparkling particles rising from the pages, mystical light trails swirling upward, weathered parchment pages, dark leather cover, atmospheric clouds, cinematic fantasy lighting, ethereal glow, realistic textures, shallow depth of field, photorealistic, ultra-detailed, high contrast, 8K." },
+                    { label: "C", text: "A magical ancient book floating in a dark stormy sky, open pages glowing softly, blue magical energy and golden sparkling particles rising from the pages, mystical light trails swirling upward, colourful digital pages, modern metallic cover, atmospheric clouds, cartoon fantasy lighting, ethereal glow, stylized textures, shallow depth of field, photorealistic, ultra-detailed, high contrast, 8K." },
+                    { label: "D", text: "A magical ancient book floating in a dark stormy sky, open pages glowing softly, blue magical energy and golden sparkling particles rising from the pages, mystical light trails swirling upward, weathered parchment pages, dark leather cover, atmospheric clouds, cinematic fantasy lighting, ethereal glow, realistic textures, shallow depth of field, photorealistic, ultra-detailed, high contrast, 8K." }
+                ]
+            },
+            {
+                id: 5,
+                image: "img-5.jpeg",
+                correct: "B",
+                options: [
+                    { label: "A", text: "Silver vintage pocket watch floating in a blue sky, melting like liquid gold with golden drips and droplets. White clock face, black Roman numerals, ornate black hands, antique casing, soft daylight, wispy clouds, realistic reflections, photorealistic, cinematic, shallow depth of field, 8K" },
+                    { label: "B", text: "Silver vintage pocket watch floating in a blue sky, melting like liquid chrome with long silver drips and hanging droplets. White clock face, black Roman numerals, ornate black hands, antique metal casing and crown, soft daylight, wispy clouds, realistic metallic reflections, photorealistic, cinematic, shallow depth of field, 8K." },
+                    { label: "C", text: "Silver vintage pocket watch floating in a blue sky, solid rigid metal body with silver chains and hanging ornaments instead of melting drips. White clock face, black numerals, ornate black hands, antique casing, soft daylight, wispy clouds, realistic reflections, photorealistic, cinematic, shallow depth of field, 8K." },
+                    { label: "D", text: "Silver vintage pocket watch floating in a blue sky, melting like liquid chrome with silver drips and droplets. White clock face, black Roman numerals, ornate black hands, antique casing, soft daylight, wispy clouds, realistic reflections, watercolor painting style, deep depth of field, 8K." }
+                ]
+            }
+        ];
+
+        function App() {
+            const [name, setName] = useState("");
+            const [departmentName, setDepartmentName] = useState("");
+            const [collegeName, setCollegeName] = useState("");
+            const [accessCode, setAccessCode] = useState("");
+            const [candidateId, setCandidateId] = useState("");
+            const [quizStarted, setQuizStarted] = useState(false);
+            const [quizFinished, setQuizFinished] = useState(false);
+            const [currentQ, setCurrentQ] = useState(0);
+            const [answers, setAnswers] = useState({});
+            const [timer, setTimer] = useState(900);
+            const [infractions, setInfractions] = useState(0);
+            const [warningMsg, setWarningMsg] = useState("");
+
+            // Using a ref to prevent stale closures in the timer useEffect
+            const stateRef = useRef({ answers, infractions, name, departmentName, collegeName, accessCode, candidateId, timer });
+            
+            useEffect(() => {
+                stateRef.current = { answers, infractions, name, departmentName, collegeName, accessCode, candidateId, timer };
+            }, [answers, infractions, name, departmentName, collegeName, accessCode, candidateId, timer]);
+
+            const SUPABASE_URL = "https://eenbmlygljjdrjujeexv.supabase.co";
+            const SUPABASE_ANON_KEY = "sb_publishable_pv_ZxXU4XPjOFxxglQeEaQ_E6669ovB";
+
+            const saveResponse = async (record) => {
+                if (SUPABASE_URL.startsWith("YOUR_") || SUPABASE_ANON_KEY.startsWith("YOUR_")) {
+                    console.warn("Supabase is not configured. Add SUPABASE_URL and SUPABASE_ANON_KEY.");
+                    return;
+                }
+                try {
+                    const response = await fetch(`${SUPABASE_URL}/rest/v1/thinkverse_responses`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "apikey": SUPABASE_ANON_KEY,
+                            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+                            "Prefer": "return=minimal"
+                        },
+                        body: JSON.stringify(record)
+                    });
+                    if (!response.ok) throw new Error(await response.text());
+                } catch (error) {
+                    console.error("Unable to save response:", error);
+                    alert("Your response could not be saved to the database. Please check your internet connection and contact the coordinator.");
+                }
+            };
+
+            const handleFinish = useCallback(async (status = "completed", reason = null, infractionOverride = null) => {
+                if (quizFinished) return;
+                setQuizFinished(true);
+
+                const {
+                    answers: finalAnswers,
+                    name: finalName,
+                    departmentName: finalDept,
+                    collegeName: finalCollege,
+                    accessCode: finalAccessCode,
+                    candidateId: finalId,
+                    infractions: finalInfractions,
+                    timer: finalTimer
+                } = stateRef.current;
+
+                const evaluatedAnswers = {};
+                let score = 0;
+                let correctCount = 0;
+
+                questions.forEach((question) => {
+                    const selected = finalAnswers[question.id] || null;
+                    const isCorrect = selected === question.correct;
+                    const points = isCorrect ? 2 : 0;
+
+                    evaluatedAnswers[String(question.id)] = {
+                        selected,
+                        correct: question.correct,
+                        is_correct: isCorrect,
+                        points
+                    };
+
+                    if (isCorrect) {
+                        correctCount += 1;
+                        score += 2;
+                    }
+                });
+
+                // 15-minute countdown: elapsed = 900 - remaining.
+                // Clamp to prevent negative durations.
+                const elapsedSeconds = Math.max(0, Math.min(900, 900 - Number(finalTimer || 0)));
+                const minutes = Math.floor(elapsedSeconds / 60);
+                const seconds = elapsedSeconds % 60;
+                const totalDuration = `${minutes}m ${seconds}s`;
+
+                await saveResponse({
+                    candidate_name: finalName,
+                    department_name: finalDept,
+                    college_name: finalCollege,
+                    access_code: finalAccessCode,
+                    candidate_id: finalId,
+                    answers: finalAnswers,
+                    answer_points: evaluatedAnswers,
+                    correct_count: correctCount,
+                    score,
+                    time_taken: totalDuration,
+                    time_taken_seconds: elapsedSeconds,
+                    infractions: infractionOverride ?? finalInfractions,
+                    status,
+                    disqualification_reason: reason,
+                    completed_at: new Date().toISOString()
+                });
+            }, [quizFinished]);
+
+            useEffect(() => {
+                let interval;
+                if (quizStarted && !quizFinished && timer > 0) {
+                    interval = setInterval(() => setTimer(t => t - 1), 1000);
+                } else if (timer === 0 && quizStarted && !quizFinished) {
+                    handleFinish();
+                }
+                return () => clearInterval(interval);
+            }, [quizStarted, quizFinished, timer, handleFinish]);
+
+            useEffect(() => {
+                const disqualify = (reason) => {
+                    if (quizStarted && !quizFinished) {
+                        setInfractions(prev => prev + 1);
+                        setWarningMsg(`DISQUALIFIED: ${reason}`);
+                        handleFinish("disqualified", reason, stateRef.current.infractions + 1);
+                    }
+                };
+
+                const handleVisibilityChange = () => {
+                    if (document.hidden) disqualify("Screen/tab changed or browser was hidden");
+                };
+
+                const handleBlur = () => {
+                    disqualify("Browser window lost focus");
+                };
+
+                const handleFullscreenChange = () => {
+                    if (quizStarted && !quizFinished && !document.fullscreenElement && !document.webkitFullscreenElement) {
+                        disqualify("Fullscreen mode was exited");
+                    }
+                };
+
+                const handleContextMenu = (e) => {
+                    if (quizStarted && !quizFinished) {
+                        e.preventDefault();
+                        disqualify("Right-click attempted");
+                    }
+                };
+
+                const handleCopyPaste = (e) => {
+                    if (quizStarted && !quizFinished) {
+                        e.preventDefault();
+                        disqualify("Clipboard action attempted");
+                    }
+                };
+
+                const handleKeyDown = (e) => {
+                    if (quizStarted && !quizFinished && (
+                        e.key === "PrintScreen" || e.key === "F12" ||
+                        (e.ctrlKey && ["c", "v", "u", "s", "p"].includes(e.key.toLowerCase())) ||
+                        (e.metaKey && ["c", "v", "u", "s", "p"].includes(e.key.toLowerCase())) ||
+                        (e.altKey && e.key === "Tab")
+                    )) {
+                        e.preventDefault();
+                        disqualify("Restricted keyboard shortcut attempted");
+                    }
+                };
+
+                document.addEventListener("visibilitychange", handleVisibilityChange);
+                window.addEventListener("blur", handleBlur);
+                document.addEventListener("fullscreenchange", handleFullscreenChange);
+                document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+                document.addEventListener("contextmenu", handleContextMenu);
+                document.addEventListener("copy", handleCopyPaste);
+                document.addEventListener("paste", handleCopyPaste);
+                window.addEventListener("keydown", handleKeyDown);
+
+                return () => {
+                    document.removeEventListener("visibilitychange", handleVisibilityChange);
+                    window.removeEventListener("blur", handleBlur);
+                    document.removeEventListener("fullscreenchange", handleFullscreenChange);
+                    document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+                    document.removeEventListener("contextmenu", handleContextMenu);
+                    document.removeEventListener("copy", handleCopyPaste);
+                    document.removeEventListener("paste", handleCopyPaste);
+                    window.removeEventListener("keydown", handleKeyDown);
+                };
+            }, [quizStarted, quizFinished, handleFinish]);
+
+            const showWarning = (msg) => {
+                setWarningMsg(msg);
+                setTimeout(() => setWarningMsg(""), 3000);
+            };
+
+            const requestFullScreen = async () => {
+                const elem = document.documentElement;
+                const canRequestFullscreen = !!(elem && (
+                    elem.requestFullscreen ||
+                    elem.webkitRequestFullscreen ||
+                    elem.msRequestFullscreen
+                ));
+
+                if (!canRequestFullscreen) {
+                    return false;
+                }
+
+                try {
+                    if (elem.requestFullscreen) await elem.requestFullscreen();
+                    else if (elem.webkitRequestFullscreen) await elem.webkitRequestFullscreen();
+                    else if (elem.msRequestFullscreen) await elem.msRequestFullscreen();
+
+                    // Some browsers resolve the promise before fullscreen is
+                    // actually active. Verify it before allowing the quiz to start.
+                    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+                } catch (e) {
+                    console.warn("Fullscreen policy prevented auto-fullscreen.");
+                    return false;
+                }
+            };
+
+            const handleStart = (e) => {
+                e.preventDefault();
+                if (!name.trim()) return alert("Name is required");
+                if (!departmentName.trim()) return alert("Department Name is required");
+                if (!collegeName.trim()) return alert("College Name is required");
+                if (!accessCode.trim()) return alert("Access Code is required");
+
+                requestFullScreen().then((entered) => {
+                    if (!entered) {
+                        alert("Fullscreen permission is required to enter ThinkVerse. Please allow fullscreen and try again.");
+                        return;
+                    }
+                    setCandidateId("CAND-" + crypto.randomUUID().slice(0, 8).toUpperCase());
+                    setQuizStarted(true);
+                });
+            };
+
+            const handleSelectOption = (optLabel) => {
+                setAnswers(prev => ({ ...prev, [questions[currentQ].id]: optLabel }));
+            };
+
+            const handleNext = () => {
+                if (currentQ < questions.length - 1) {
+                    setCurrentQ(prev => prev + 1);
+                } else {
+                    handleFinish();
+                }
+            };
+
+            const formatTime = (seconds) => {
+                const m = Math.floor(seconds / 60);
+                const s = seconds % 60;
+                return `${m}:${s < 10 ? '0' : ''}${s}`;
+            };
+            const q = questions[currentQ];
+
+            return (
+                <>
+
+                    {!quizStarted ? (
+                        <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 p-4">
+                            <div className="max-w-md w-full bg-slate-800 rounded-2xl shadow-2xl overflow-hidden border border-slate-700">
+                                <div className="bg-slate-900 p-6 text-center border-b border-slate-700">
+                                    <div 
+                                        
+                                        className="w-16 h-16 mx-auto bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition shadow-[0_0_15px_rgba(6,182,212,0.4)]"
+                                    >
+                                        <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                                    </div>
+                                    <h1 className="mt-4 text-2xl font-bold text-white tracking-wide">ThinkVerse 2026</h1>
+                                    <p className="text-cyan-400 text-sm mt-1">Prompt Master Symposium Evaluation</p>
+                                </div>
+                                
+                                <form onSubmit={handleStart} className="p-6 space-y-4">
+                                    <div className="bg-slate-900/60 border border-slate-700 p-4 rounded-xl text-xs space-y-1.5 text-slate-300">
+                                        <p className="font-semibold text-cyan-300 mb-1">Proctored Guidelines:</p>
+                                        <p>• 15-minute timer will run continuously.</p>
+                                        <p>• Screen/tab changes, focus loss, fullscreen exit and restricted actions cause immediate disqualification.</p>
+                                        <p>• Match each visual output to its exact generative prompt.</p>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-300 mb-1">Full Name</label>
+                                        <input 
+                                            type="text" 
+                                            required
+                                            className="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition"
+                                            placeholder="Enter your registered name"
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-300 mb-1">Department Name</label>
+                                        <input 
+                                            type="text" 
+                                            required
+                                            className="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition"
+                                            placeholder="E.g. Computer Science"
+                                            value={departmentName}
+                                            onChange={(e) => setDepartmentName(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-300 mb-1">College Name</label>
+                                        <input 
+                                            type="text" 
+                                            required
+                                            className="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition"
+                                            placeholder="Enter your college name"
+                                            value={collegeName}
+                                            onChange={(e) => setCollegeName(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-300 mb-1">Access Code</label>
+                                        <input 
+                                            type="text" 
+                                            required
+                                            className="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition"
+                                            placeholder="Provided by coordinator"
+                                            value={accessCode}
+                                            onChange={(e) => setAccessCode(e.target.value)}
+                                        />
+                                    </div>
+                                    
+                                    <button type="submit" className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-cyan-500/25 transition transform active:scale-95">
+                                        Enter Fullscreen &amp; Start Evaluation
+                                    </button>
+                                    <p className="text-center text-xs text-slate-500">Fullscreen is required before the evaluation begins.</p>
+                                </form>
+                            </div>
+                        </div>
+                    ) : (
+                        quizFinished ? (
+                            <div className="bg-slate-800 rounded-2xl shadow-xl border border-slate-700 p-8 text-center max-w-2xl mx-auto mt-12">
+                                <div 
+                                    
+                                    className="w-16 h-16 mx-auto mb-5 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition shadow-[0_0_15px_rgba(6,182,212,0.4)]"
+                                >
+                                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                                </div>
+                                <h2 className={`text-2xl font-bold mb-2 ${infractions > 0 ? 'text-red-400' : 'text-white'}`}>{infractions > 0 ? 'Evaluation Disqualified' : 'Evaluation Completed'}</h2>
+                                <p className="text-slate-400 text-sm mb-6">{infractions > 0 ? 'A screen or security violation was detected. You cannot continue this evaluation.' : 'Your answers and proctoring status have been recorded.'}</p>
+                                
+                                <div className="bg-slate-900 rounded-xl p-4 border border-slate-700 inline-block text-left text-sm space-y-1">
+                                    <p className="text-slate-400">Candidate ID: <span className="font-mono text-white">{candidateId}</span></p>
+                                    <p className="text-slate-400">Security Inconsistencies: <span className={`font-bold ${infractions > 0 ? 'text-red-400' : 'text-green-400'}`}>{infractions}</span></p>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="min-h-screen bg-slate-900 flex flex-col font-sans prevent-select">
+                                {warningMsg && (
+                                    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-5 py-2.5 rounded-lg shadow-2xl z-50 text-sm font-bold border border-red-400 flex items-center gap-2 animate-bounce">
+                                        <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                        {warningMsg}
+                                    </div>
+                                )}
+
+                                <header className="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-40 flex justify-between items-center shadow-md">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-cyan-600 rounded-full flex items-center justify-center">
+                                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                                        </div>
+                                        <div>
+                                            <h2 className="font-bold text-white leading-tight">ThinkVerse 2026</h2>
+                                            <p className="text-xs text-slate-400">{name} • {candidateId}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    {!quizFinished && (
+                                        <div className={`flex items-center gap-2 px-4 py-1.5 rounded-lg font-mono text-lg font-bold border ${timer < 120 ? 'bg-red-900/50 border-red-500 text-red-400 animate-pulse' : 'bg-slate-900 border-slate-600 text-cyan-400'}`}>
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            {formatTime(timer)}
+                                        </div>
+                                    )}
+                                </header>
+
+                                <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 lg:p-8">
+                                    <div className="grid lg:grid-cols-2 gap-8 items-start">
+                                        <div className="bg-slate-800 rounded-2xl p-4 shadow-xl border border-slate-700 lg:sticky lg:top-24">
+                                            <div className="flex justify-between items-center mb-3">
+                                                <h3 className="font-bold text-sm text-slate-300">Target Output Image {currentQ + 1} of {questions.length}</h3>
+                                            </div>
+                                            <div className="aspect-square w-full rounded-xl overflow-hidden bg-slate-900 border border-slate-700 relative flex items-center justify-center">
+                                                <div className="absolute text-slate-500 text-xs z-0">Attempting local load: {q.image.replace('./', '')}</div>
+                                                <img 
+                                                    src={q.image} 
+                                                    alt={`Question ${currentQ + 1}`} 
+                                                    className="w-full h-full object-contain pointer-events-none relative z-10"
+                                                    onError={(e) => { e.target.style.display = 'none'; }}
+                                                    onDragStart={(e) => e.preventDefault()}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-5">
+                                            <div className="bg-slate-800 rounded-2xl p-6 shadow-xl border border-slate-700">
+                                                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                                    <span className="bg-cyan-600 text-white text-xs py-1 px-2.5 rounded-full">Q{currentQ + 1}</span>
+                                                    Select the prompt that produced this visual render:
+                                                </h3>
+                                                
+                                                <div className="space-y-3">
+                                                    {q.options.map((opt) => {
+                                                        const isSelected = answers[q.id] === opt.label;
+                                                        return (
+                                                            <div 
+                                                                key={opt.label}
+                                                                onClick={() => handleSelectOption(opt.label)}
+                                                                className={`p-4 rounded-xl border cursor-pointer transition-all ${isSelected ? 'bg-cyan-950/40 border-cyan-500 ring-1 ring-cyan-500' : 'bg-slate-900 border-slate-700 hover:border-slate-500 hover:bg-slate-800'}`}
+                                                            >
+                                                                <div className="flex items-start gap-3">
+                                                                    <div className={`w-5 h-5 shrink-0 rounded-full border flex items-center justify-center mt-0.5 ${isSelected ? 'border-cyan-500 bg-cyan-500' : 'border-slate-500'}`}>
+                                                                        {isSelected && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                                                                    </div>
+                                                                    <div className="text-sm">
+                                                                        <span className="font-bold text-slate-400 mr-1.5">Option {opt.label}:</span>
+                                                                        <span className={isSelected ? 'text-white font-medium' : 'text-slate-300'}>
+                                                                            {opt.text}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+
+                                            <div className="flex justify-end pt-2">
+                                                <button 
+                                                    onClick={handleNext}
+                                                    disabled={!answers[q.id]}
+                                                    className={`px-6 py-2.5 rounded-lg font-bold text-sm transition flex items-center gap-2 shadow-lg
+                                                        ${!answers[q.id] 
+                                                            ? 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed' 
+                                                            : 'bg-cyan-600 hover:bg-cyan-500 text-white'}`}
+                                                >
+                                                    {currentQ < questions.length - 1 ? 'Save & Next' : 'Submit Evaluation'}
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </main>
+                            </div>
+                        )
+                    )}
+                </>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
