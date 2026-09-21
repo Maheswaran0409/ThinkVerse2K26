@@ -153,9 +153,14 @@
                     const isCorrect = selected === question.correct;
                     const points = isCorrect ? 2 : 0;
 
+                    const selectedOption = question.options.find(o => o.label === selected) || null;
+                    const correctOption = question.options.find(o => o.label === question.correct) || null;
                     evaluatedAnswers[String(question.id)] = {
                         selected,
+                        selected_text: selectedOption ? selectedOption.text : null,
                         correct: question.correct,
+                        correct_source: question.sourceCorrect || question.correct,
+                        correct_text: correctOption ? correctOption.text : null,
                         is_correct: isCorrect,
                         points
                     };
