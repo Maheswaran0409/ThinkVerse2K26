@@ -360,7 +360,7 @@
             };
 
             const handleNext = () => {
-                if (currentQ < questions.length - 1) {
+                if (currentQ < shuffledQuestions.length - 1) {
                     setCurrentQ(prev => prev + 1);
                 } else {
                     handleFinish();
